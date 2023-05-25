@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<section>
+  <div class="visits-container">
+    <h1>All visits</h1>
+    {% for visit in visits %}
+
+    <div class="visit-summary"><a href="/{{g.user.username}}/visits/{{visit.id}}">
+        <h3>{{visit.park.park_name}} </h3>
+        <div class="visit-summary-details">
+          <h4><i>{{visit.start_date}} to {{visit.end_date}}</i></h4>
+          <ul>
+            {% for activity in visit.activities %}
+
+            <li>{{activity.name}} <i class="activity-type">{{activity.activity_type}}</i> </li>
+
+            {% endfor %}
+          </ul>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

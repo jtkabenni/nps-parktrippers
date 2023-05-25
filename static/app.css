@@ -1,0 +1,265 @@
+.available-activities {
+  top: 0;
+}
+
+.selected {
+  background: rgb(192, 192, 192, 0.5);
+}
+
+.selected-activities {
+  text-align: center;
+  position: sticky;
+  align-self: flex-start;
+  top: 0;
+}
+
+ul {
+  text-align: left;
+  margin: 0;
+}
+
+.activity-type {
+  background-color: rgb(12, 0, 145);
+  border-radius: 10px;
+  padding: 2px;
+}
+
+.hide {
+  display: none;
+}
+
+.visit-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  margin: 10px;
+}
+
+.visit-summary,
+.activity-summary,
+.available-activities > div {
+  border-radius: 10px;
+  backdrop-filter: blur(4px);
+  background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2));
+  padding: 10px;
+  margin: 10px;
+}
+
+.visit-summary:hover {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1));
+}
+
+.visit-summary a:hover {
+  text-decoration: none;
+}
+
+.visit-summary-details,
+.activity-summary-details {
+  display: grid;
+  grid-template-columns: 1fr 3fr;
+  grid-gap: 10px;
+}
+
+.visit-summary-details > ul,
+div.activity-description {
+  border-left: 2px rgb(198, 198, 198) solid;
+  padding-left: 40px;
+  padding-right: 40px;
+  margin: 10px;
+}
+
+.activity-delete {
+  position: absolute;
+
+  top: 0;
+  right: 0;
+  color: rgb(255, 255, 255);
+  padding: 10px;
+  margin: 10px;
+}
+
+datalist {
+  position: absolute;
+  max-height: 20em;
+  border: 0 none;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+datalist option {
+  font-size: 0.8em;
+  padding: 0.3em 1em;
+  background-color: #ccc;
+  cursor: pointer;
+}
+
+datalist option:hover,
+datalist option:focus {
+  color: #fff;
+  background-color: #036;
+  outline: 0 none;
+}
+
+button {
+  background: none;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2));
+  border-radius: 10px;
+  border: none;
+  color: rgb(255, 255, 255);
+  text-decoration: none;
+  padding: 5px;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+  margin: 10px;
+}
+
+button:hover {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1));
+}
+
+#submit-park {
+}
+
+nav {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.label {
+  font-size: 24px;
+}
+
+.nav-links > a,
+.label {
+  padding: 10px;
+}
+
+input {
+  padding: 5px;
+  margin: 10px;
+}
+
+body {
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+  color: rgb(255, 255, 255);
+}
+
+form {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.homepage-container > h1 {
+  font-size: 36px;
+}
+
+h1,
+h2,
+p,
+ul,
+h3,
+h4 {
+  color: rgb(255, 255, 255);
+  margin: 10px;
+}
+
+h1 {
+  margin: 30px;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.homepage-container,
+.auth-container {
+  top: 40%;
+  width: 100%;
+  position: absolute;
+  text-align: center;
+  margin: auto;
+}
+
+.search-container {
+  top: 10%;
+  padding-top: 50px;
+  text-align: center;
+  width: 50%;
+  margin: auto;
+}
+
+.search-container li {
+  text-align: left;
+}
+
+.activities-container {
+  margin: auto;
+  width: 75%;
+  display: flex;
+  top: 20%;
+}
+
+.visits-container,
+.visit-container {
+  margin: auto;
+  width: 50%;
+  padding-top: 50px;
+  padding-bottom: 50px;
+}
+
+.activities-container > div {
+  width: 50%;
+}
+
+body {
+  overflow-x: scroll;
+  background-size: cover;
+  height: 100vh;
+  background-repeat: repeat;
+  background-attachment: fixed;
+}
+
+textarea {
+  width: 100%;
+}
+
+.note {
+  display: flex;
+}
+/* .add-visit {
+  background-repeat: repeat;
+  background-attachment: fixed;
+} */
+
+.IMG_URL {
+  color: black;
+}
+
+@media only screen and (max-width: 1200px) {
+  .visits-container,
+  .visit-container,
+  .search-container,
+  .activities-container {
+    /* margin: 20px; */
+    width: 75%;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .visits-container,
+  .visit-container,
+  .search-container,
+  .activities-container {
+    margin: 20px;
+    width: auto;
+  }
+}

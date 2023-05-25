@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<section class="add-visit">
+  <div class="search-container">
+    <p>I'm going to <input list="park-list" name="park-list" autocomplete="off" placeholder=" Search for a park..."
+        value="{{visit.park.park_name}}" id="search-park" readonly><datalist id="park-list">
+      </datalist> from <input id="start-date" type="date" value="{{visit.start_date}}" />
+      to
+      <input id="end-date" type="date" value="{{visit.end_date}}" /> <button id="submit-park">Add park</button>
+    </p>
+    <div id="parks-list">
+      <ul></ul>
+    </div>
+
+  </div>
+
+  <div class="activities-container">
+    <div class="available-activities">
+
+    </div>
+    <div class="selected-activities hide">
+      <h3>Selected activities</h3>
+      <p><i>Click on activities to add them to your visit!</i></p>
+      <ul></ul>
+
+      <form id="update-visit">
+        <input type="hidden" name="visit-id" value="{{visit.id}}">
+        <input type="hidden" name="user-username" value="{{g.user.username}}">
+        <button type="submit">Update visit</button>
+      </form>
+
+
+    </div>
+  </div>
+</section>
+{% endblock %}

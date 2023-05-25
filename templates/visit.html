@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<section>
+  <div class="visit-container">
+    <h1>{{visit.park.park_name}} - <i> {{visit.start_date}} to
+        {{visit.end_date}}</i>
+    </h1>
+
+    {% for activity in visit.activities|sort(attribute='name') %}
+    <div class="activity-summary">
+      <div class="activity-summary-details">
+        <div>
+          <h3>{{activity.name}} </h3>
+          <p><i class="activity-type">{{activity.activity_type}}</i></p>
+          {% if activity.location %}
+          <p>Location: {{activity.location}}</p>
+          {% endif %}
+          {% if activity.duration %}
+          <p>Duration: {{activity.duration}}</p>
+          {% endif %}
+        </div>
+        <div class="activity-description">
+          <p>{{activity.description}}</p>
+          <div class="note">
+            <form action="/{{g.user.username}}/visits/{{visit.id}}/save-activity-note" method="POST">
+              <input type="hidden" name="activity-id" value="{{activity.id}}">
+              <textarea name="note"
+                placeholder="Add activity notes here..">{% if activity.notes %}{{activity.notes}}{% endif %}</textarea>
+              <button type="submit">Save</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="activity-delete">
+        <form action="{{visit.id}}/activities/{{activity.id}}/delete-activity" method="POST">
+          <button><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+        </form>
+      </div>
+
+    </div>
+    {% endfor %}
+    <div class="visit-actions">
+      <form action="{{visit.id}}/delete-visit" method="POST">
+        <button>Delete visit</button>
+      </form>
+      <div>
+        <a href="{{visit.id}}/update-visit"><button>Add new activity</button></a>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+
+{% endblock %}
