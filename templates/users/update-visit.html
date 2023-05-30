@@ -8,11 +8,11 @@
         value="{{visit.park.park_name}}" id="search-park" readonly><datalist id="park-list">
       </datalist> from <input id="start-date" type="date" value="{{visit.start_date}}" />
       to
-      <input id="end-date" type="date" value="{{visit.end_date}}" /> <button id="submit-park">Add park</button>
+      <input id="end-date" type="date" value="{{visit.end_date}}" /> <input type="hidden" name="park-id"
+        value="{{visit.park_code}}"><button id="update-activities">Search
+        activities</button>
     </p>
-    <div id="parks-list">
-      <ul></ul>
-    </div>
+
 
   </div>
 
@@ -27,6 +27,7 @@
 
       <form id="update-visit">
         <input type="hidden" name="visit-id" value="{{visit.id}}">
+
         <input type="hidden" name="user-username" value="{{g.user.username}}">
         <button type="submit">Update visit</button>
       </form>

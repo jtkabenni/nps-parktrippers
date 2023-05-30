@@ -1,8 +1,9 @@
-const suggestions = document.querySelector("#parks-list ul");
-const suggestions2 = document.querySelector("#park-list");
+const NPSBaseUrl = "https://developer.nps.gov/api/v1";
+const suggestions = document.querySelector("#park-list");
 const parkSearch = document.querySelector("#search-park");
 const apiKey = "S7cm7RqypBs9MQKwodrODT5NBiv5oGDjOdaH1nVf";
-const addParkButton = document.querySelector("#submit-park");
+const searchActivitiesButton = document.querySelector("#search-activities");
+const updateActivitiesButton = document.querySelector("#update-activities");
 const activitiesSection = document.querySelector(".available-activities");
 const selectedActivitiesSection = document.querySelector(
   ".selected-activities"
@@ -10,42 +11,52 @@ const selectedActivitiesSection = document.querySelector(
 const selectedActivitiesList = document.querySelector(
   ".selected-activities ul"
 );
-const startDate = document.querySelector("#start-date");
-const endDate = document.querySelector("#end-date");
-
-let parks = [];
+const startDateInput = document.getElementById("start-date");
+const endDateInput = document.getElementById("end-date");
+let parks = {};
 let parkData = {};
 let parkActivities = {};
 let selectedActivities = [];
 let visit = {};
+let searchStatus = null;
 
 async function fetchParks() {
-  try {
-    const response = await axios.get(
-      `https://developer.nps.gov/api/v1/parks?api_key=${apiKey}&limit=500`
-    );
-    console.log(response.data.data);
-    parks = response.data.data;
-    displayParksuggestions();
-  } catch (err) {
-    console.log(err);
+  if (searchStatus === "Add ") {
+    try {
+      const response = await axios.get(
+        `${NPSBaseUrl}/parks?api_key=${apiKey}&limit=500`
+      );
+      parks = response.data.data;
+      displayParkSuggestions(parks);
+      console.log(parks);
+    } catch (err) {
+      console.log(err);
+    }
+  } else if (searchStatus === "Update") {
+    const parkId = document.querySelector('input[name="park-id"]').value;
+    try {
+      const response = await axios.get(
+        `${NPSBaseUrl}/parks?api_key=${apiKey}&parkCode=${parkId}`
+      );
+      parks = response.data.data;
+      displayParkSuggestions(parks);
+      console.log(parks);
+    } catch (err) {
+      console.log(err);
+    }
   }
 }
 
-function displayParksuggestions() {
+function displayParkSuggestions(parks) {
   suggestions.innerHTML = "";
   for (let park of parks) {
     let option = document.createElement("option");
     option.innerHTML = park.fullName;
-    suggestions2.append(option);
+    suggestions.append(option);
   }
 }
 
 function validateDates() {
-  // e.preventDefault();
-  const startDateInput = document.getElementById("start-date");
-  const endDateInput = document.getElementById("end-date");
-  console.log(startDateInput.value, endDateInput.value);
   const searchContainer = document.querySelector(".search-container p");
   if (startDateInput.value > endDateInput.value) {
     p = document.createElement("p");
@@ -62,31 +73,30 @@ function validateDates() {
 
 async function submitPark(e) {
   validateDates();
-  const getParkData = async (endpoint, activityKey) => {
-    try {
-      const response = await axios.get(
-        `https://developer.nps.gov/api/v1/${endpoint}?api_key=${apiKey}&limit=500&parkCode=${parkData.parkCode}`
-      );
-
-      parkActivities[activityKey] = response.data.data;
-    } catch (err) {
-      console.log(err);
-    }
-  };
   parkData = parks.find((park) => park.fullName === parkSearch.value);
   if (parkData) {
     await Promise.all([
-      getParkData("campgrounds", "campgrounds"),
-      getParkData("events", "events"),
-      getParkData("thingstodo", "thingstodo"),
+      getParkActivities("campgrounds"),
+      getParkActivities("events"),
+      getParkActivities("thingstodo"),
     ]);
   }
-  (visit = {
+  visit = {
     park_code: parkData.parkCode,
-    start_date: startDate.value,
-    end_date: endDate.value,
-  }),
-    console.log(parkActivities);
+    start_date: startDateInput.value,
+    end_date: endDateInput.value,
+  };
+}
+// Get park activities based on given endpoint
+async function getParkActivities(endpoint) {
+  try {
+    const response = await axios.get(
+      `https://developer.nps.gov/api/v1/${endpoint}?api_key=${apiKey}&limit=500&parkCode=${parkData.parkCode}`
+    );
+    parkActivities[endpoint] = response.data.data;
+  } catch (err) {
+    console.log(err);
+  }
 }
 
 function displayParkActivities() {
@@ -97,18 +107,17 @@ function displayParkActivities() {
         <b>Location:</b>${activity.location}
       </p>`
       : "";
-
     const duration = activity.duration
       ? `<p>
         <b>Duration:</b>${activity.duration}
       </p>`
       : "";
-
-    const div = document.createElement("div");
-
     selectedActivitiesSection.classList.remove("hide");
+    const div = document.createElement("div");
     div.innerHTML = `<h3>${activity.title}</h3><p ><i class = "activity-type">${activity.activities[0].name}</i> </p><p>${activity.shortDescription}</p>${location}${duration}`;
-    div.addEventListener("click", (e) => addActivityToSelected(e, activity));
+    div.addEventListener("click", (e) => {
+      addActivityToSelected(e, activity), addSelectedActivityLis();
+    });
     activitiesSection.append(div);
   }
 }
@@ -126,18 +135,18 @@ function addActivityToSelected(e, activity) {
       location: activity.location,
       duration: activity.duration,
     });
-    console.log(selectedActivities);
   } else {
     const indexToRemove = selectedActivities.findIndex(
       (item) => item.name === activity.title
     );
     if (indexToRemove !== -1) {
       selectedActivities.splice(indexToRemove, 1);
-      console.log("Removed item from selectedActivities:", activity.name);
+      console.log("Removed:", activity.name);
     }
-    console.log(selectedActivities);
   }
+}
 
+function addSelectedActivityLis() {
   for (activity of selectedActivities) {
     const li = document.createElement("li");
     li.innerHTML = activity.name;
@@ -145,9 +154,18 @@ function addActivityToSelected(e, activity) {
   }
 }
 
-addParkButton.addEventListener("click", async () => {
-  await submitPark();
-  displayParkActivities();
-});
-
-fetchParks();
+if (searchActivitiesButton) {
+  searchStatus = "Add";
+  fetchParks();
+  searchActivitiesButton.addEventListener("click", async () => {
+    await submitPark();
+    displayParkActivities();
+  });
+} else if (updateActivitiesButton) {
+  searchStatus = "Update";
+  fetchParks();
+  updateActivitiesButton.addEventListener("click", async () => {
+    await submitPark();
+    displayParkActivities();
+  });
+}

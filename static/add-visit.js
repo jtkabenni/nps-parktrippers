@@ -1,7 +1,6 @@
 const addVisitButton = document.querySelector("#add-visit");
 
 async function addVisit(e) {
-  e.preventDefault();
   console.log("clicked add visit");
   try {
     await axios.post(
@@ -23,6 +22,10 @@ async function addVisit(e) {
     console.log(err);
   }
 }
-addVisitButton.addEventListener("click", async (e) => {
-  addVisit(e);
-});
+
+if (addVisitButton) {
+  addVisitButton.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    addVisit(e);
+  });
+}

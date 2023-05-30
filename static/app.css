@@ -1,3 +1,84 @@
+ul {
+  text-align: left;
+  margin: 0;
+}
+
+button {
+  background: none;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2));
+  border-radius: 10px;
+  border: none;
+  color: rgb(255, 255, 255);
+  text-decoration: none;
+  padding: 5px;
+  font: inherit;
+  cursor: pointer;
+  outline: inherit;
+  margin: 10px;
+}
+
+button:hover {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1));
+}
+
+nav {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+input {
+  padding: 5px;
+  margin: 10px;
+}
+
+body {
+  margin: 0;
+}
+
+a {
+  text-decoration: none;
+  color: rgb(255, 255, 255);
+}
+
+form {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+h1,
+h2,
+p,
+ul,
+h3,
+h4 {
+  color: rgb(255, 255, 255);
+  margin: 10px;
+}
+
+h1 {
+  margin: 30px;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+body {
+  overflow-x: scroll;
+  background-size: cover;
+  height: 100vh;
+  background-repeat: repeat;
+  background-attachment: fixed;
+}
+
+textarea {
+  width: 100%;
+}
+
 .available-activities {
   top: 0;
 }
@@ -11,11 +92,6 @@
   position: sticky;
   align-self: flex-start;
   top: 0;
-}
-
-ul {
-  text-align: left;
-  margin: 0;
 }
 
 .activity-type {
@@ -78,57 +154,6 @@ div.activity-description {
   margin: 10px;
 }
 
-datalist {
-  position: absolute;
-  max-height: 20em;
-  border: 0 none;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
-datalist option {
-  font-size: 0.8em;
-  padding: 0.3em 1em;
-  background-color: #ccc;
-  cursor: pointer;
-}
-
-datalist option:hover,
-datalist option:focus {
-  color: #fff;
-  background-color: #036;
-  outline: 0 none;
-}
-
-button {
-  background: none;
-  background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2));
-  border-radius: 10px;
-  border: none;
-  color: rgb(255, 255, 255);
-  text-decoration: none;
-  padding: 5px;
-  font: inherit;
-  cursor: pointer;
-  outline: inherit;
-  margin: 10px;
-}
-
-button:hover {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1));
-}
-
-#submit-park {
-}
-
-nav {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-}
-
 .label {
   font-size: 24px;
 }
@@ -138,46 +163,8 @@ nav {
   padding: 10px;
 }
 
-input {
-  padding: 5px;
-  margin: 10px;
-}
-
-body {
-  margin: 0;
-}
-
-a {
-  text-decoration: none;
-  color: rgb(255, 255, 255);
-}
-
-form {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
 .homepage-container > h1 {
   font-size: 36px;
-}
-
-h1,
-h2,
-p,
-ul,
-h3,
-h4 {
-  color: rgb(255, 255, 255);
-  margin: 10px;
-}
-
-h1 {
-  margin: 30px;
-}
-
-a:hover {
-  text-decoration: underline;
 }
 
 .homepage-container,
@@ -218,18 +205,6 @@ a:hover {
 
 .activities-container > div {
   width: 50%;
-}
-
-body {
-  overflow-x: scroll;
-  background-size: cover;
-  height: 100vh;
-  background-repeat: repeat;
-  background-attachment: fixed;
-}
-
-textarea {
-  width: 100%;
 }
 
 .note {

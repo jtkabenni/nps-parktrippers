@@ -1,5 +1,7 @@
 from flask import Flask, render_template, redirect, jsonify, request, session, flash, g
+from dotenv import load_dotenv
 import json
+import os
 import requests
 from datetime import datetime
 from models import User, Visit, Activity, Park, db, connect_db
@@ -9,11 +11,13 @@ from sqlalchemy.exc import IntegrityError
 CURR_USER_KEY = "curr_user"
 
 app = Flask(__name__)
+load_dotenv()
 app.app_context().push()
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///parktrippers'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = "verysecret"
 app.config['SQLALCHEMY_ECHO'] = True
+
 connect_db(app)
 db.create_all()
 
@@ -23,7 +27,6 @@ def add_user_to_g():
 
     if CURR_USER_KEY in session:
         g.user = User.query.get(session[CURR_USER_KEY])
-
     else:
         g.user = None
 
@@ -32,83 +35,61 @@ def add_user_to_g():
 def add_image_to_session():
     if 'background_img' not in session:
         try:
-            response = requests.get('https://api.unsplash.com/photos/random?client_id=8N5zOzJdzyrY52CZMTtMu9xDfv5xWY4iEP6CpIHVi2o&collections=2471561&orientation=landscape')
+            response = requests.get(f'https://api.unsplash.com/photos/random?client_id={os.getenv("UNSPLASH_API_KEY")}&collections=2471561&orientation=landscape')
             if response.status_code == 200:
                 data = response.json()
                 session['background_img'] = data['urls']['raw']
-                print(session, 38)
        
         except requests.exceptions.RequestException as err:
             print(err)
             return 'Error fetching background image.'
 
-
-
 def do_login(user):
     """Log in user."""
-
     session[CURR_USER_KEY] = user.username
-
 
 def do_logout():
     """Logout user."""
-
     if CURR_USER_KEY in session:
         del session[CURR_USER_KEY]
 
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
-    """Handle user signup.
-
-    Create new user and add to DB. Redirect to home page.
-
-    If form not valid, present form.
-
-    If the there already is a user with that username: flash message
-    and re-present form.
-    """
+    """Handle user signup."""
 
     form = UserAddEditForm()
-
     if form.validate_on_submit():
         try:
-            user = User.signup(
+            user = User.register(
+                first_name = form.first_name.data,
+                last_name = form.last_name.data,
                 username=form.username.data,
                 password=form.password.data,
-                email=form.email.data,
-                image_url=form.image_url.data or User.image_url.default.arg,
-            )
+                email=form.email.data  
+            )        
+            db.session.add(user)
             db.session.commit()
-
         except IntegrityError:
             flash("Username already taken", 'danger')
-            return render_template('users/signup.html', form=form)
-
+            return render_template('users/sign-up.html', form=form)
         do_login(user)
-
         return redirect("/")
-
     else:
-        return render_template('users/signup.html', form=form)
-
+        return render_template('users/sign-up.html', form=form)
 
 @app.route('/login', methods=["GET", "POST"])
 def login():
     """Handle user login."""
 
     form = LoginForm()
-
     if form.validate_on_submit():
         user = User.authenticate(form.username.data,
                                  form.password.data)
-
         if user:
             do_login(user)
             flash(f"Hello, {user.username}!", "success")
             return redirect("/")
-
         flash("Invalid credentials.", 'danger')
-
     return render_template('users/login.html', form=form)
 
 
@@ -171,7 +152,7 @@ def add_visit():
       newActivity = Activity(name=activity["name"], description=activity["description"], activity_type=activity["activity_type"], duration=activity["duration"], location=activity["location"], visit_id=newVisit.id)
       db.session.add(newActivity)
       db.session.commit()
-    print(f'added new <<<<<<<<<<<<<<<<<< {newVisit}')
+
 
     return redirect(f'/{g.user.username}')
 
@@ -184,7 +165,6 @@ def show_visit_page(username,visit_id):
     visit = Visit.query.get_or_404(visit_id)
     visit.start_date = visit.start_date.strftime("%A %B %d, %Y")
     visit.end_date = visit.end_date.strftime("%A %B %d, %Y")
-    print (f"<<<<<<<<<<<{visit.start_date, visit.end_date}")
     return render_template('visit.html', visit=visit)
 
 @app.route('/<username>/visits/<int:visit_id>/save-activity-note', methods=['POST'])
@@ -192,9 +172,7 @@ def save_activity_note(username,visit_id):
     """Save activity note"""
     note = request.form.get('note')
     activity_id = request.form.get('activity-id')
-    print(f"<<<<<<{note}, {activity_id}")
     activity = Activity.query.get_or_404(activity_id)
-    print(f"<<<<<<{activity}")
     activity.notes = note
     db.session.commit()
     return redirect (f"/{username}/visits/{visit_id}")
@@ -226,31 +204,23 @@ def display_update_visit(username,visit_id):
         flash("Access unauthorized.", "danger")
         return redirect("/")
     visit = Visit.query.filter_by(id=visit_id).first()
-
     return render_template('users/update-visit.html', visit = visit)
 
 @app.route('/<username>/visits/<int:visit_id>/update-visit', methods=['POST'])
 def update_visit(username, visit_id):
     """Add visit and activities"""
-    print(f'<<<<<<<<<<<<<<UPDATED VISIT')
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
     visit = Visit.query.filter_by(id=visit_id).first()
     updatedVisit = request.json["visit"]
-    print(f"<<<<<<<<<<<PLEASEEEEEE visit<<<{updatedVisit}")
-
     visit.start_date = updatedVisit['start_date']
     visit.end_date = updatedVisit['end_date']
     db.session.commit()
-
     activities = request.json["activities"]
-    print(f"<<<<<<<<<<<PLEASEEEEEE visit<<<{updatedVisit}")
-    print(f"<<<<<<<<<<<PLEASEEEEEE activities<<<{activities}")
     for activity in activities:
       newActivity = Activity(name=activity["name"], description=activity["description"], activity_type=activity["activity_type"], duration=activity["duration"], location=activity["location"], visit_id=visit_id)
       db.session.add(newActivity)
       db.session.commit()
-      print(f"<<<<<<<<<<<<<<{activity}")
     return redirect(f'/{username}')
 

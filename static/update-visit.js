@@ -1,7 +1,6 @@
 const updateVisitButton = document.querySelector("#update-visit");
 
 async function updateVisit(e) {
-  e.preventDefault();
   const visitId = document.querySelector('input[name="visit-id"]').value;
   const username = document.querySelector('input[name="user-username"]').value;
   console.log("clicked update visit");
@@ -25,7 +24,9 @@ async function updateVisit(e) {
     console.log(err);
   }
 }
-
-updateVisitButton.addEventListener("click", async (e) => {
-  updateVisit(e);
-});
+if (updateVisitButton) {
+  updateVisitButton.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    updateVisit(e);
+  });
+}
