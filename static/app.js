@@ -1,61 +1,78 @@
-const NPSBaseUrl = "https://developer.nps.gov/api/v1";
-const suggestions = document.querySelector("#park-list");
 const parkSearch = document.querySelector("#search-park");
-const apiKey = "S7cm7RqypBs9MQKwodrODT5NBiv5oGDjOdaH1nVf";
+const startDateInput = document.getElementById("start-date");
+const endDateInput = document.getElementById("end-date");
+const parkSuggestions = document.querySelector("#park-list");
 const searchActivitiesButton = document.querySelector("#search-activities");
 const updateActivitiesButton = document.querySelector("#update-activities");
-const activitiesSection = document.querySelector(".available-activities");
+const availableActivitiesSection = document.querySelector(
+  ".available-activities"
+);
 const selectedActivitiesSection = document.querySelector(
   ".selected-activities"
 );
 const selectedActivitiesList = document.querySelector(
   ".selected-activities ul"
 );
-const startDateInput = document.getElementById("start-date");
-const endDateInput = document.getElementById("end-date");
 let parks = {};
-let parkData = {};
+let selectedParkData = {};
 let parkActivities = {};
 let selectedActivities = [];
 let visit = {};
 let searchStatus = null;
 
+// Fetch parks based on add visit or update visit status
 async function fetchParks() {
-  if (searchStatus === "Add ") {
+  if (searchStatus === "Add") {
     try {
-      const response = await axios.get(
-        `${NPSBaseUrl}/parks?api_key=${apiKey}&limit=500`
-      );
+      const response = await axios.get("/fetch-parks");
       parks = response.data.data;
       displayParkSuggestions(parks);
-      console.log(parks);
     } catch (err) {
       console.log(err);
     }
   } else if (searchStatus === "Update") {
     const parkId = document.querySelector('input[name="park-id"]').value;
+    console.log(parkId);
     try {
-      const response = await axios.get(
-        `${NPSBaseUrl}/parks?api_key=${apiKey}&parkCode=${parkId}`
-      );
+      const response = await axios.get("/fetch-updated-park", {
+        params: { parkId: parkId },
+      });
       parks = response.data.data;
-      displayParkSuggestions(parks);
-      console.log(parks);
     } catch (err) {
       console.log(err);
     }
   }
 }
 
+// Add park names to datalist input as dropdown/search options
 function displayParkSuggestions(parks) {
-  suggestions.innerHTML = "";
+  parkSuggestions.innerHTML = "";
   for (let park of parks) {
     let option = document.createElement("option");
     option.innerHTML = park.fullName;
-    suggestions.append(option);
+    parkSuggestions.append(option);
   }
 }
 
+// search for park, validate DataTransfer, and call requests to get all park activities for given endpoints
+async function submitPark(e) {
+  validateDates();
+  selectedParkData = parks.find((park) => park.fullName === parkSearch.value);
+  if (selectedParkData) {
+    await Promise.all([
+      getParkActivities("campgrounds"),
+      getParkActivities("events"),
+      getParkActivities("thingstodo"),
+    ]);
+  }
+  visit = {
+    park_code: selectedParkData.parkCode,
+    start_date: startDateInput.value,
+    end_date: endDateInput.value,
+  };
+}
+
+// Add date input validation to search park function
 function validateDates() {
   const searchContainer = document.querySelector(".search-container p");
   if (startDateInput.value > endDateInput.value) {
@@ -71,36 +88,26 @@ function validateDates() {
   }
 }
 
-async function submitPark(e) {
-  validateDates();
-  parkData = parks.find((park) => park.fullName === parkSearch.value);
-  if (parkData) {
-    await Promise.all([
-      getParkActivities("campgrounds"),
-      getParkActivities("events"),
-      getParkActivities("thingstodo"),
-    ]);
-  }
-  visit = {
-    park_code: parkData.parkCode,
-    start_date: startDateInput.value,
-    end_date: endDateInput.value,
-  };
-}
-// Get park activities based on given endpoint
+// Get park activities based on given endpoint and save to parkActivities
 async function getParkActivities(endpoint) {
   try {
-    const response = await axios.get(
-      `https://developer.nps.gov/api/v1/${endpoint}?api_key=${apiKey}&limit=500&parkCode=${parkData.parkCode}`
-    );
+    const response = await axios.get("/fetch-park-activities", {
+      params: {
+        endpoint: endpoint,
+        parkId: selectedParkData.parkCode,
+      },
+    });
+
+    console.log(response);
     parkActivities[endpoint] = response.data.data;
   } catch (err) {
     console.log(err);
   }
 }
 
+// add activity div for each park activity
 function displayParkActivities() {
-  activitiesSection.innerHTML = "";
+  availableActivitiesSection.innerHTML = "";
   for (let activity of parkActivities.thingstodo) {
     const location = activity.location
       ? `<p>
@@ -118,12 +125,12 @@ function displayParkActivities() {
     div.addEventListener("click", (e) => {
       addActivityToSelected(e, activity), addSelectedActivityLis();
     });
-    activitiesSection.append(div);
+    availableActivitiesSection.append(div);
   }
 }
 
+// manage adding and removing selected activities
 function addActivityToSelected(e, activity) {
-  selectedActivitiesList.innerHTML = "";
   const closestDiv = e.target.closest("div");
   closestDiv.classList.toggle("selected");
 
@@ -141,12 +148,15 @@ function addActivityToSelected(e, activity) {
     );
     if (indexToRemove !== -1) {
       selectedActivities.splice(indexToRemove, 1);
-      console.log("Removed:", activity.name);
+      console.log("Removed:", activity.title);
     }
   }
 }
 
+// add activity li for each selected activity
 function addSelectedActivityLis() {
+  selectedActivitiesList.innerHTML = "";
+  console.log(selectedActivities);
   for (activity of selectedActivities) {
     const li = document.createElement("li");
     li.innerHTML = activity.name;
@@ -154,6 +164,7 @@ function addSelectedActivityLis() {
   }
 }
 
+// update search status and add event listener based on which template is rendered
 if (searchActivitiesButton) {
   searchStatus = "Add";
   fetchParks();

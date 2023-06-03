@@ -9,13 +9,14 @@ from forms import UserAddEditForm, LoginForm
 from sqlalchemy.exc import IntegrityError
 
 CURR_USER_KEY = "curr_user"
+NPS_BASE_URL = "https://developer.nps.gov/api/v1"
 
 app = Flask(__name__)
 load_dotenv()
 app.app_context().push()
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql:///parktrippers'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("SQLALCHEMY_DATABASE_URI")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = "verysecret"
+app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 app.config['SQLALCHEMY_ECHO'] = True
 
 connect_db(app)
@@ -30,7 +31,6 @@ def add_user_to_g():
     else:
         g.user = None
 
-
 @app.before_request
 def add_image_to_session():
     if 'background_img' not in session:
@@ -43,6 +43,47 @@ def add_image_to_session():
         except requests.exceptions.RequestException as err:
             print(err)
             return 'Error fetching background image.'
+
+
+
+@app.route('/fetch-parks')
+def fetch_parks():
+    try:
+        response = requests.get(f'{NPS_BASE_URL}/parks?api_key={os.getenv("NPS_API_KEY")}&limit=500')
+        if response.status_code == 200:
+            data = response.json()
+            print(f"<<<<<<<<<<<<<<<<<<<<<<<<<{data}")
+            return data
+    except requests.exceptions.RequestException as err:
+        print(err)
+
+@app.route('/fetch-updated-park')
+def fetch_updated_park():
+    park_id = request.args.get("parkId")
+    print(f"<<<<<<<<<<<<<<<<<<<<<<<<<{park_id}")
+    try:
+        response = requests.get(f'{NPS_BASE_URL}/parks?api_key={os.getenv("NPS_API_KEY")}&parkCode={park_id}')
+        if response.status_code == 200:
+            data = response.json()
+            print(f"<<<<<<<<<<<<<<<<<<<<<<<<<{data}")
+            return data
+    except requests.exceptions.RequestException as err:
+        print(err)
+
+@app.route('/fetch-park-activities')
+def fetch_park_activities():
+    endpoint = request.args.get("endpoint")
+    park_id = request.args.get("parkId")
+    print(f"<<<<<<<<<<<<<<<<<<<<<<<<<{endpoint, park_id}")
+    try:
+        response = requests.get(f'{NPS_BASE_URL}/{endpoint}?api_key={os.getenv("NPS_API_KEY")}&limit=500&parkCode={park_id}')
+        if response.status_code == 200:
+            data = response.json()
+
+            return data
+    except requests.exceptions.RequestException as err:
+        print(err)
+
 
 def do_login(user):
     """Log in user."""
@@ -122,6 +163,7 @@ def users_show(username):
         visit.end_date = visit.end_date.strftime("%A %B %d, %Y")
     return render_template('users/profile.html', user=user, visits=visits)
 
+
 @app.route('/add-visit')
 def display_add_visit_form():
     if not g.user:
@@ -152,8 +194,6 @@ def add_visit():
       newActivity = Activity(name=activity["name"], description=activity["description"], activity_type=activity["activity_type"], duration=activity["duration"], location=activity["location"], visit_id=newVisit.id)
       db.session.add(newActivity)
       db.session.commit()
-
-
     return redirect(f'/{g.user.username}')
 
 @app.route('/<username>/visits/<int:visit_id>' )

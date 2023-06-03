@@ -10,7 +10,10 @@ async function updateVisit(e) {
       {
         visit: visit,
         activities: selectedActivities,
-        park: { park_code: parkData.parkCode, park_name: parkData.fullName },
+        park: {
+          park_code: selectedParkData.parkCode,
+          park_name: selectedParkData.fullName,
+        },
       },
       {
         headers: {
