@@ -39,11 +39,10 @@ def add_image_to_session():
             if response.status_code == 200:
                 data = response.json()
                 session['background_img'] = data['urls']['raw']
-       
+    
         except requests.exceptions.RequestException as err:
             print(err)
             return 'Error fetching background image.'
-
 
 
 @app.route('/fetch-parks')
@@ -52,7 +51,6 @@ def fetch_parks():
         response = requests.get(f'{NPS_BASE_URL}/parks?api_key={os.getenv("NPS_API_KEY")}&limit=500')
         if response.status_code == 200:
             data = response.json()
-            print(f"<<<<<<<<<<<<<<<<<<<<<<<<<{data}")
             return data
     except requests.exceptions.RequestException as err:
         print(err)
@@ -60,12 +58,10 @@ def fetch_parks():
 @app.route('/fetch-updated-park')
 def fetch_updated_park():
     park_id = request.args.get("parkId")
-    print(f"<<<<<<<<<<<<<<<<<<<<<<<<<{park_id}")
     try:
         response = requests.get(f'{NPS_BASE_URL}/parks?api_key={os.getenv("NPS_API_KEY")}&parkCode={park_id}')
         if response.status_code == 200:
             data = response.json()
-            print(f"<<<<<<<<<<<<<<<<<<<<<<<<<{data}")
             return data
     except requests.exceptions.RequestException as err:
         print(err)
@@ -74,12 +70,10 @@ def fetch_updated_park():
 def fetch_park_activities():
     endpoint = request.args.get("endpoint")
     park_id = request.args.get("parkId")
-    print(f"<<<<<<<<<<<<<<<<<<<<<<<<<{endpoint, park_id}")
     try:
         response = requests.get(f'{NPS_BASE_URL}/{endpoint}?api_key={os.getenv("NPS_API_KEY")}&limit=500&parkCode={park_id}')
         if response.status_code == 200:
             data = response.json()
-
             return data
     except requests.exceptions.RequestException as err:
         print(err)
@@ -166,6 +160,7 @@ def users_show(username):
 
 @app.route('/add-visit')
 def display_add_visit_form():
+    """Display add visit form"""
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
@@ -228,7 +223,6 @@ def delete_visit(username,visit_id):
     db.session.commit()
     return redirect (f'/{username}')
 
-
 @app.route('/<username>/visits/<int:visit_id>/activities/<int:activity_id>/delete-activity', methods=['POST'])
 def delete_activity(username, visit_id, activity_id):
     """Delete activity"""
@@ -237,9 +231,9 @@ def delete_activity(username, visit_id, activity_id):
     db.session.commit()
     return redirect (f'/{username}/visits/{visit_id}')
 
-
 @app.route('/<username>/visits/<int:visit_id>/update-visit')
 def display_update_visit(username,visit_id):
+    """Display update visit page"""
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
@@ -248,7 +242,7 @@ def display_update_visit(username,visit_id):
 
 @app.route('/<username>/visits/<int:visit_id>/update-visit', methods=['POST'])
 def update_visit(username, visit_id):
-    """Add visit and activities"""
+    """Update visit """
     if not g.user:
         flash("Access unauthorized.", "danger")
         return redirect("/")
