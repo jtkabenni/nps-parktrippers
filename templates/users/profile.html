@@ -4,6 +4,8 @@
 {% block content %}
 <section>
   <div class="visits-container">
+
+    {% if visits %}
     <h1>All visits</h1>
     {% for visit in visits %}
 
@@ -22,6 +24,11 @@
       </a>
     </div>
     {% endfor %}
+
+    {% else %}
+    <h1> <a href="/add-visit">Add a visit</a> to get started!</h1>
+    {% endif %}
+
   </div>
 </section>
 {% endblock %}

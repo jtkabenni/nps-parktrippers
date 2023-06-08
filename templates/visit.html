@@ -42,12 +42,14 @@
     </div>
     {% endfor %}
     <div class="visit-actions">
-      <form action="{{visit.id}}/delete-visit" method="POST">
-        <button>Delete visit</button>
+
+      <form action="{{visit.id}}/delete-visit" method="POST"> <button>Delete visit</button>
       </form>
-      <div>
-        <a href="{{visit.id}}/update-visit"><button>Add new activity</button></a>
-      </div>
+
+
+      <button>
+        <a href="{{visit.id}}/update-visit">Add new activity</a>
+      </button>
     </div>
 
   </div>

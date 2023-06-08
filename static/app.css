@@ -10,7 +10,7 @@ button {
   border: none;
   color: rgb(255, 255, 255);
   text-decoration: none;
-  padding: 5px;
+  padding: 10px;
   font: inherit;
   cursor: pointer;
   outline: inherit;
@@ -18,7 +18,10 @@ button {
 }
 
 button:hover {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1));
+  background-image: linear-gradient(
+    rgba(255, 255, 255, 0.2),
+    rgba(255, 255, 255, 0.2)
+  );
 }
 
 nav {
@@ -45,7 +48,7 @@ a {
 
 form {
   width: 100%;
-  display: flex;
+  /* display: flex; */
   justify-content: center;
 }
 
@@ -77,6 +80,11 @@ body {
 
 textarea {
   width: 100%;
+  margin: 10px;
+}
+
+.note form {
+  display: flex;
 }
 
 .available-activities {
@@ -111,18 +119,28 @@ textarea {
   margin: 10px;
 }
 
+/* .visit-actions form {
+  width: 
+} */
+
 .visit-summary,
 .activity-summary,
 .available-activities > div {
   border-radius: 10px;
   backdrop-filter: blur(4px);
-  background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2));
+  background-image: linear-gradient(
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.1)
+  );
   padding: 10px;
   margin: 10px;
 }
 
 .visit-summary:hover {
-  background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1));
+  background-image: linear-gradient(
+    rgba(255, 255, 255, 0.2),
+    rgba(255, 255, 255, 0.2)
+  );
 }
 
 .visit-summary a:hover {
@@ -141,17 +159,14 @@ div.activity-description {
   border-left: 2px rgb(198, 198, 198) solid;
   padding-left: 40px;
   padding-right: 40px;
-  margin: 10px;
 }
 
 .activity-delete {
   position: absolute;
-
   top: 0;
   right: 0;
   color: rgb(255, 255, 255);
   padding: 10px;
-  margin: 10px;
 }
 
 .label {
