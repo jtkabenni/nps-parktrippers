@@ -147,9 +147,10 @@ def home():
 @app.route('/<username>')
 def users_show(username):
     """Show user profile."""
-    if not g.user:
+    if not g.user or username != g.user.username:
         flash("Access unauthorized.", "danger")
         return redirect("/")
+    
     user = User.query.get_or_404(username)
     visits = (Visit.query.filter(Visit.username == user.username).order_by(Visit.start_date).all())
     for visit in visits:

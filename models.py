@@ -24,6 +24,8 @@ class User(db.Model):
     last_name=db.Column(db.String(30), nullable=False)
     created_at=db.Column(db.DateTime, default =datetime.now)
 
+    visits = db.relationship("Visit", backref="user", passive_deletes=True)
+    activities = db.relationship("Activity", secondary = "visits", backref = "user", passive_deletes=True)
 
     @classmethod
     def register(cls, username, password, email, first_name, last_name):
@@ -59,6 +61,7 @@ class Visit(db.Model):
     park_code = db.Column(db.String(4), db.ForeignKey('parks.park_code', ondelete='CASCADE'))
     username = db.Column(db.String(20), db.ForeignKey('users.username', ondelete='CASCADE'))
 
+    
     activities = db.relationship("Activity", backref="visit", passive_deletes=True)
 
 class Park(db.Model):
@@ -76,7 +79,7 @@ class Activity(db.Model):
     name = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=False)
     activity_type = db.Column(db.String(100), nullable=False)
-    location = db.Column(db.String(100), nullable=False)
+    location = db.Column(db.String(100))
     notes = db.Column(db.Text)
     duration = db.Column(db.String(100))
     date = db.Column(db.DateTime)
