@@ -25,7 +25,7 @@ class User(db.Model):
     created_at=db.Column(db.DateTime, default =datetime.now)
 
     visits = db.relationship("Visit", backref="user", passive_deletes=True)
-    activities = db.relationship("Activity", secondary = "visits", backref = "user", passive_deletes=True)
+  
 
     @classmethod
     def register(cls, username, password, email, first_name, last_name):

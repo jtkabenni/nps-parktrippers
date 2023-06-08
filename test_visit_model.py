@@ -49,14 +49,14 @@ class VisitModelTestCase(TestCase):
         user = User.query.get_or_404(self.u1.username)
         self.assertEqual(len(user.visits), 2)
 
-    def test_visit_add_activities(self):
-        """Verify added activities associated with user"""
-        a1 = Activity(name = "Hiking on X trail", description = "Description for this hike.", activity_type= "hike", location = "Hike 1 location", visit_id =self.v1.id )
-        a2 = Activity(name = "Hiking on XYX trail", description = "Description for second hike.", activity_type= "hike", location = "Hike 2 location", visit_id =self.v1.id )
-        db.session.add_all([a1, a2])
-        db.session.commit()
-        user = User.query.get_or_404(self.u1.username)
-        self.assertEqual(len(user.activities),2)
+    # def test_visit_add_activities(self):
+    #     """Verify added activities associated with user"""
+    #     a1 = Activity(name = "Hiking on X trail", description = "Description for this hike.", activity_type= "hike", location = "Hike 1 location", visit_id =self.v1.id )
+    #     a2 = Activity(name = "Hiking on XYX trail", description = "Description for second hike.", activity_type= "hike", location = "Hike 2 location", visit_id =self.v1.id )
+    #     db.session.add_all([a1, a2])
+    #     db.session.commit()
+    #     user = User.query.get_or_404(self.u1.username)
+    #     self.assertEqual(len(user.activities),2)
 
 
 
