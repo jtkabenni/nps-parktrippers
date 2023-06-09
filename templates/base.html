@@ -11,8 +11,9 @@
 
 </head>
 
-<body
-  style="background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('{{ session['background_img'] }}')">
+<body>
+  <input hidden name="background-img" value="{{ session['background_img'] }}">
+
   <nav>
     <a href="/" class="label">Parktrippers</a>
     <div class="nav-links">

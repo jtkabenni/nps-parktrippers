@@ -13,6 +13,8 @@ const selectedActivitiesSection = document.querySelector(
 const selectedActivitiesList = document.querySelector(
   ".selected-activities ul"
 );
+
+let searchValidationP = document.querySelector(".validation");
 let parks = {};
 let selectedParkData = {};
 let parkActivities = {};
@@ -56,36 +58,37 @@ function displayParkSuggestions(parks) {
 
 // search for park, validate DataTransfer, and call requests to get all park activities for given endpoints
 async function submitPark(e) {
-  validateDates();
-  selectedParkData = parks.find((park) => park.fullName === parkSearch.value);
-  if (selectedParkData) {
-    await Promise.all([
-      getParkActivities("campgrounds"),
-      getParkActivities("events"),
-      getParkActivities("thingstodo"),
-    ]);
+  if (validateDates() === "ok") {
+    selectedActivities = [];
+    selectedActivitiesList.innerHTML = "";
+    selectedParkData = parks.find((park) => park.fullName === parkSearch.value);
+    if (selectedParkData) {
+      await Promise.all([
+        getParkActivities("campgrounds"),
+        getParkActivities("events"),
+        getParkActivities("thingstodo"),
+      ]);
+    }
+    visit = {
+      park_code: selectedParkData.parkCode,
+      start_date: startDateInput.value,
+      end_date: endDateInput.value,
+    };
+    displayParkActivities();
   }
-  visit = {
-    park_code: selectedParkData.parkCode,
-    start_date: startDateInput.value,
-    end_date: endDateInput.value,
-  };
 }
 
 // Add date input validation to search park function
 function validateDates() {
-  const searchContainer = document.querySelector(".search-container p");
-  if (startDateInput.value > endDateInput.value) {
-    p = document.createElement("p");
-    p.innerHTML = "The start date cannot be greater than the end date.";
-    searchContainer.append(p);
-    return;
+  searchValidationP.innerHTML = "";
+  if (parkSearch.value === "") {
+    searchValidationP.innerHTML = "Please enter a park.";
+  } else if (startDateInput.value > endDateInput.value) {
+    searchValidationP.innerHTML =
+      "The start date cannot be greater than the end date.";
   } else if (startDateInput.value === "" || endDateInput.value === "") {
-    p = document.createElement("p");
-    p.innerHTML = "Please enter a date.";
-    searchContainer.append(p);
-    return;
-  }
+    searchValidationP.innerHTML = "Please enter a date.";
+  } else return "ok";
 }
 
 // Get park activities based on given endpoint and save to parkActivities
@@ -170,13 +173,24 @@ if (searchActivitiesButton) {
   fetchParks();
   searchActivitiesButton.addEventListener("click", async () => {
     await submitPark();
-    displayParkActivities();
   });
 } else if (updateActivitiesButton) {
   searchStatus = "Update";
   fetchParks();
   updateActivitiesButton.addEventListener("click", async () => {
     await submitPark();
-    displayParkActivities();
   });
 }
+//Load body only when background image loaded
+window.addEventListener("load", (event) => {
+  const backgroundUrl = document.querySelector(
+    'input[name="background-img"]'
+  ).value;
+
+  const img = new Image();
+  img.src = backgroundUrl;
+  img.onload = () => {
+    document.body.style.display = "block";
+    document.body.style.backgroundImage = `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('${backgroundUrl}')`;
+  };
+});

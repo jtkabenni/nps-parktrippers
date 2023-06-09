@@ -1,7 +1,6 @@
 const addVisitButton = document.querySelector("#add-visit");
 
 async function addVisit(e) {
-  console.log("clicked add visit");
   try {
     await axios.post(
       "/add-visit",
@@ -19,7 +18,6 @@ async function addVisit(e) {
         },
       }
     );
-    console.log("success!");
     window.location.href = "/";
   } catch (err) {
     console.log(err);

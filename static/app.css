@@ -37,10 +37,6 @@ input {
   margin: 10px;
 }
 
-body {
-  margin: 0;
-}
-
 a {
   text-decoration: none;
   color: rgb(255, 255, 255);
@@ -76,6 +72,8 @@ body {
   height: 100vh;
   background-repeat: repeat;
   background-attachment: fixed;
+  margin: 0;
+  display: none;
 }
 
 textarea {
