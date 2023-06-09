@@ -130,6 +130,9 @@ function displayParkActivities() {
     });
     availableActivitiesSection.append(div);
   }
+  if (availableActivitiesSection.innerHTML === "") {
+    availableActivitiesSection.innerHTML = `<p>No activities available! Please search for another park.</p>`;
+  }
 }
 
 // manage adding and removing selected activities

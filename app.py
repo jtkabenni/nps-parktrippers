@@ -176,8 +176,8 @@ def add_visit():
         return redirect("/")
     park = request.json["park"]
     # query park with that park_code, if it exists, do nothing, if not, save new park with code and name
-    doesPark = Park.query.filter(Park.park_code == park["park_code"]).first()
-    if not doesPark:
+    existingPark = Park.query.filter(Park.park_code == park["park_code"]).first()
+    if not existingPark:
       newPark = Park(park_code=park["park_code"], park_name=park["park_name"])
       db.session.add(newPark)
       db.session.commit()
