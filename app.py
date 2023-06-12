@@ -2,14 +2,14 @@ from flask import Flask, render_template, redirect, jsonify, request, session, f
 from dotenv import load_dotenv
 import json
 import os
-import requests
 from datetime import datetime
 from models import User, Visit, Activity, Park, db, connect_db
 from forms import UserAddEditForm, LoginForm
 from sqlalchemy.exc import IntegrityError
+from services.nps_api import api_fetch_parks, api_fetch_updated_park, api_fetch_park_activities
+from services.unsplash_api import api_get_image
 
 CURR_USER_KEY = "curr_user"
-NPS_BASE_URL = "https://developer.nps.gov/api/v1"
 
 app = Flask(__name__)
 load_dotenv()
@@ -34,49 +34,28 @@ def add_user_to_g():
 @app.before_request
 def add_image_to_session():
     if 'background_img' not in session:
-        try:
-            response = requests.get(f'https://api.unsplash.com/photos/random?client_id={os.getenv("UNSPLASH_API_KEY")}&collections=2471561&orientation=landscape')
-            if response.status_code == 200:
-                data = response.json()
-                session['background_img'] = data['urls']['raw']
-    
-        except requests.exceptions.RequestException as err:
-            print(err)
-            return 'Error fetching background image.'
-
+        image_data = api_get_image()
+        session['background_img'] = image_data
 
 @app.route('/fetch-parks')
 def fetch_parks():
-    try:
-        response = requests.get(f'{NPS_BASE_URL}/parks?api_key={os.getenv("NPS_API_KEY")}&limit=500')
-        if response.status_code == 200:
-            data = response.json()
-            return data
-    except requests.exceptions.RequestException as err:
-        print(err)
+    parks = api_fetch_parks()
+    return parks
+
 
 @app.route('/fetch-updated-park')
 def fetch_updated_park():
     park_id = request.args.get("parkId")
-    try:
-        response = requests.get(f'{NPS_BASE_URL}/parks?api_key={os.getenv("NPS_API_KEY")}&parkCode={park_id}')
-        if response.status_code == 200:
-            data = response.json()
-            return data
-    except requests.exceptions.RequestException as err:
-        print(err)
+    updated_park = api_fetch_updated_park(park_id)
+    return updated_park
+
 
 @app.route('/fetch-park-activities')
 def fetch_park_activities():
     endpoint = request.args.get("endpoint")
     park_id = request.args.get("parkId")
-    try:
-        response = requests.get(f'{NPS_BASE_URL}/{endpoint}?api_key={os.getenv("NPS_API_KEY")}&limit=500&parkCode={park_id}')
-        if response.status_code == 200:
-            data = response.json()
-            return data
-    except requests.exceptions.RequestException as err:
-        print(err)
+    activities = api_fetch_park_activities(endpoint,park_id)
+    return activities
 
 
 def do_login(user):
