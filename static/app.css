@@ -78,7 +78,7 @@ body {
 
 textarea {
   width: 100%;
-  margin: 10px;
+  margin: 0px 10px;
   height: 75px;
 }
 
@@ -250,5 +250,18 @@ div.activity-description {
   .activities-container {
     margin: 20px;
     width: auto;
+  }
+  .visit-summary-details ul,
+  div.activity-description {
+    padding-right: 30px;
+    padding-left: 25px;
+  }
+
+  .activity-delete {
+    padding: 0px;
+  }
+
+  h3 {
+    font-size: 16px;
   }
 }
