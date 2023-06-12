@@ -123,8 +123,10 @@ def login():
         if user:
             do_login(user)
             flash(f"Hello, {user.username}!", "success")
+            print('<<<<<<SUCCESS!!')
             return redirect("/")
         flash("Invalid credentials.", 'danger')
+        print('<<<<<<<UNSUCCESS!!')
     return render_template('users/login.html', form=form)
 
 
