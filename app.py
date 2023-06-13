@@ -99,10 +99,7 @@ def login():
     print(f"Validate on submit: {validate_on_submit}")
 
     for field, errors in form.errors.items():
-        print(f"Field error: {field}")
-
-        for error, lines in errors.iteritems():
-            print(f"ERROR: {error} || {','.join(lines)}")
+        print(f"Field error: {field} || {', '.join(errors)} >>>")
 
     print(f"Errors: {form.errors}")
     print(f"<<<<<<<<<<<<<<<<{form.__dict__}")
