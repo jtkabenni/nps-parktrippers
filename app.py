@@ -1,4 +1,5 @@
 from flask import Flask, render_template, redirect, jsonify, request, session, flash, g
+from flask_wtf.csrf import CSRFProtect
 from dotenv import load_dotenv
 import json
 import os
@@ -10,8 +11,9 @@ from services.nps_api import api_fetch_parks, api_fetch_updated_park, api_fetch_
 from services.unsplash_api import api_get_image
 
 CURR_USER_KEY = "curr_user"
-
+csrf = CSRFProtect()
 app = Flask(__name__)
+csrf.init_app(app)
 load_dotenv()
 app.app_context().push()
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("SQLALCHEMY_DATABASE_URI")

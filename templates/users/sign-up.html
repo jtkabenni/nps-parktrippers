@@ -8,9 +8,8 @@
   <div class="auth-container">
     <h2>Sign up.</h2>
     <form method="POST" id="user_form">
-      {{ form.csrf_token }}
       {{ form.hidden_tag() }}
-
+      {{ form.csrf_token }}
       {% for field in form if field.widget.input_type != 'hidden' %}
       {% for error in field.errors %}
       <span class="text-danger">{{ error }}</span>
