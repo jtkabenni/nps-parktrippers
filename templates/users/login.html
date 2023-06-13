@@ -8,6 +8,7 @@
   <div class="auth-container">
     <h2>Welcome back.</h2>
     <form method="POST" id="user_form">
+      {{ form.csrf_token }}
       {{ form.hidden_tag() }}
 
       {% for field in form if field.widget.input_type != 'hidden' %}
