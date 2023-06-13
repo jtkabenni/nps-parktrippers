@@ -15,14 +15,16 @@ csrf = CSRFProtect()
 app = Flask(__name__)
 csrf.init_app(app)
 load_dotenv()
-app.app_context().push()
+
+
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("SQLALCHEMY_DATABASE_URI")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 app.config['SQLALCHEMY_ECHO'] = True
 
-connect_db(app)
-db.create_all()
+with app.app_context():
+    connect_db(app)
+    db.create_all()
 
 @app.before_request
 def add_user_to_g():
@@ -98,27 +100,18 @@ def login():
 
     form = LoginForm()
     validate_on_submit = form.validate_on_submit()
-    print(f"Validate on submit: {validate_on_submit}")
-
-    for field, errors in form.errors.items():
-        print(f"Field error: {field} || {', '.join(errors)} >>>")
-
-    print(f"Errors: {form.errors}")
-    print(f"<<<<<<<<<<<<<<<<{form.__dict__}")
     if validate_on_submit:
         authenticated_user = User.authenticate(form.username.data,
                                  form.password.data)
         if authenticated_user:
             do_login(authenticated_user)
-            print('<<<<<<SUCCESSFUL LOGIN!!')
             return redirect("/")
         user = User.query.filter_by(username=form.username.data).first()
         if user:
             flash("Invalid password.")
-            print('<<<<<<<Invalid password!!')
         if not user:
             flash("Invalid username.")
-            print('<<<<<<<Invalid username!!')
+
 
     return render_template('users/login.html', form=form)
 
