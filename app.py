@@ -102,7 +102,7 @@ def login():
         print(f"Field error: {field}")
 
         for error, lines in errors.iteritems():
-            print(f"ERROR: {error} || {",".join(lines)}")
+            print(f"ERROR: {error} || {','.join(lines)}")
 
     print(f"Errors: {form.errors}")
     print(f"<<<<<<<<<<<<<<<<{form.__dict__}")
