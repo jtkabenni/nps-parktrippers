@@ -70,7 +70,6 @@ def do_logout():
 @app.route('/signup', methods=["GET", "POST"])
 def signup():
     """Handle user signup."""
-
     form = UserAddEditForm()
     if form.validate_on_submit():
         try:
@@ -96,8 +95,10 @@ def login():
     """Handle user login."""
 
     form = LoginForm()
-    print(f"<<<<<<<<<<<<<<<<{form}")
-    if form.validate_on_submit():
+    validate_on_submit = form.validate_on_submit()
+    print(f"Validate on submit: {validate_on_submit}")
+    print(f"<<<<<<<<<<<<<<<<{form.__dict__}")
+    if validate_on_submit:
         authenticated_user = User.authenticate(form.username.data,
                                  form.password.data)
         if authenticated_user:
