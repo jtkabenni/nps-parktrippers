@@ -97,6 +97,14 @@ def login():
     form = LoginForm()
     validate_on_submit = form.validate_on_submit()
     print(f"Validate on submit: {validate_on_submit}")
+
+    for field, errors in form.errors.items():
+        print(f"Field error: {field}")
+
+        for error, lines in errors.iteritems():
+            print(f"ERROR: {error} || {",".join(lines)}")
+
+    print(f"Errors: {form.errors}")
     print(f"<<<<<<<<<<<<<<<<{form.__dict__}")
     if validate_on_submit:
         authenticated_user = User.authenticate(form.username.data,
