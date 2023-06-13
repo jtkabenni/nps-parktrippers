@@ -84,7 +84,7 @@ def signup():
             db.session.add(user)
             db.session.commit()
         except IntegrityError:
-            flash("Username already taken", 'danger')
+            flash("Username already taken")
             return render_template('users/sign-up.html', form=form)
         do_login(user)
         return redirect("/")
@@ -96,16 +96,22 @@ def login():
     """Handle user login."""
 
     form = LoginForm()
+    print(f"<<<<<<<<<<<<<<<<{form}")
     if form.validate_on_submit():
-        user = User.authenticate(form.username.data,
+        authenticated_user = User.authenticate(form.username.data,
                                  form.password.data)
-        if user:
-            do_login(user)
-            flash(f"Hello, {user.username}!", "success")
-            print('<<<<<<SUCCESS!!')
+        if authenticated_user:
+            do_login(authenticated_user)
+            print('<<<<<<SUCCESSFUL LOGIN!!')
             return redirect("/")
-        flash("Invalid credentials.", 'danger')
-        print('<<<<<<<UNSUCCESS!!')
+        user = User.query.filter_by(username=form.username.data).first()
+        if user:
+            flash("Invalid password.")
+            print('<<<<<<<Invalid password!!')
+        if not user:
+            flash("Invalid username.")
+            print('<<<<<<<Invalid username!!')
+
     return render_template('users/login.html', form=form)
 
 
@@ -113,14 +119,13 @@ def login():
 def logout():
     """Handle logout of user."""
     do_logout()
-    flash("Goodbye!", "info")
     return redirect('/')
 
 
 @app.route('/')
 def home():
     if not g.user:
-        flash("Access unauthorized.", "danger")
+
         return render_template('unauth-home.html')
     return render_template('home.html')
 
@@ -129,7 +134,7 @@ def home():
 def users_show(username):
     """Show user profile."""
     if not g.user or username != g.user.username:
-        flash("Access unauthorized.", "danger")
+
         return redirect("/")
     
     user = User.query.get_or_404(username)
@@ -144,7 +149,6 @@ def users_show(username):
 def display_add_visit_form():
     """Display add visit form"""
     if not g.user:
-        flash("Access unauthorized.", "danger")
         return redirect("/")
     return render_template('users/add-visit.html')
 
@@ -153,7 +157,6 @@ def display_add_visit_form():
 def add_visit():
     """Add visit and activities"""
     if not g.user:
-        flash("Access unauthorized.", "danger")
         return redirect("/")
     park = request.json["park"]
     # query park with that park_code, if it exists, do nothing, if not, save new park with code and name
@@ -177,7 +180,7 @@ def add_visit():
 def show_visit_page(username,visit_id):
     """Display visit detail page"""
     if not g.user:
-        flash("Access unauthorized.", "danger")
+
         return redirect("/")
     visit = Visit.query.get_or_404(visit_id)
     visit.start_date = visit.start_date.strftime("%A %B %d, %Y")
@@ -198,7 +201,6 @@ def save_activity_note(username,visit_id):
 def delete_visit(username,visit_id):
     """Delete visit"""
     if not g.user:
-        flash("Access unauthorized.", "danger")
         return redirect("/")
     visit = Visit.query.filter_by(id=visit_id).first()
     db.session.delete(visit)
@@ -217,7 +219,6 @@ def delete_activity(username, visit_id, activity_id):
 def display_update_visit(username,visit_id):
     """Display update visit page"""
     if not g.user:
-        flash("Access unauthorized.", "danger")
         return redirect("/")
     visit = Visit.query.filter_by(id=visit_id).first()
     return render_template('users/update-visit.html', visit = visit)
@@ -226,7 +227,6 @@ def display_update_visit(username,visit_id):
 def update_visit(username, visit_id):
     """Update visit """
     if not g.user:
-        flash("Access unauthorized.", "danger")
         return redirect("/")
     visit = Visit.query.filter_by(id=visit_id).first()
     updatedVisit = request.json["visit"]

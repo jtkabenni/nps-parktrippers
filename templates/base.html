@@ -12,6 +12,7 @@
 </head>
 
 <body>
+
   <input hidden name="background-img" value="{{ session['background_img'] }}">
 
   <nav>
@@ -27,7 +28,9 @@
       {% endif %}
     </div>
   </nav>
-
+  {% for msg in get_flashed_messages() %}
+  <div class="flash-msg">{{ msg }}</div>
+  {% endfor %}
   {% block content %}
 
   <h1 class="activity-type">Base</h1>

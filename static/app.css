@@ -82,9 +82,11 @@ textarea {
   height: 75px;
 }
 
-/* .note form {
-  display: flex;
-} */
+.flash-msg {
+  color: rgb(255, 255, 255);
+  text-align: center;
+  padding: 20px;
+}
 
 .available-activities {
   top: 0;

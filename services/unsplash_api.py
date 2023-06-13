@@ -12,7 +12,6 @@ def api_get_image():
             response = requests.get(f'https://api.unsplash.com/photos/random?client_id={os.getenv("UNSPLASH_API_KEY")}&collections=2471561&orientation=landscape')
             if response.status_code == 200:
                 data = response.json()
-                print(data['urls']['raw'])
                 return data['urls']['raw']
     
         except requests.exceptions.RequestException as err:
