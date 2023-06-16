@@ -11,8 +11,9 @@ from services.nps_api import api_fetch_parks, api_fetch_updated_park, api_fetch_
 from services.unsplash_api import api_get_image
 
 CURR_USER_KEY = "curr_user"
-csrf = CSRFProtect()
+
 app = Flask(__name__)
+csrf = CSRFProtect(app)
 csrf.init_app(app)
 load_dotenv()
 
@@ -196,7 +197,8 @@ def save_activity_note(username,visit_id):
     activity = Activity.query.get_or_404(activity_id)
     activity.notes = note
     db.session.commit()
-    return redirect (f"/{username}/visits/{visit_id}")
+
+    return redirect(f'/{username}/visits/{visit_id}')
 
 @app.route('/<username>/visits/<int:visit_id>/delete-visit', methods=['POST'])
 def delete_visit(username,visit_id):
@@ -211,6 +213,7 @@ def delete_visit(username,visit_id):
 @app.route('/<username>/visits/<int:visit_id>/activities/<int:activity_id>/delete-activity', methods=['POST'])
 def delete_activity(username, visit_id, activity_id):
     """Delete activity"""
+
     activity = Activity.query.filter_by(id=activity_id).first()
     db.session.delete(activity)
     db.session.commit()

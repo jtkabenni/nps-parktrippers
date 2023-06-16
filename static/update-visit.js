@@ -4,6 +4,10 @@ async function updateVisit(e) {
   const visitId = document.querySelector('input[name="visit-id"]').value;
   const username = document.querySelector('input[name="user-username"]').value;
   try {
+    const form = document.getElementById("update-visit"); // Get the form element
+    const formData = new FormData(form); // Create a FormData object
+
+    const csrfToken = formData.get("csrf_token");
     await axios.post(
       `/${username}/visits/${visitId}/update-visit`,
       {
@@ -17,6 +21,7 @@ async function updateVisit(e) {
       {
         headers: {
           "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken,
         },
       }
     );

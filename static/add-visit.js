@@ -2,6 +2,10 @@ const addVisitButton = document.querySelector("#add-visit");
 
 async function addVisit(e) {
   try {
+    const form = document.getElementById("add-visit"); // Get the form element
+    const formData = new FormData(form); // Create a FormData object
+
+    const csrfToken = formData.get("csrf_token");
     await axios.post(
       "/add-visit",
       {
@@ -15,6 +19,7 @@ async function addVisit(e) {
       {
         headers: {
           "Content-Type": "application/json",
+          "X-CSRFToken": csrfToken,
         },
       }
     );
