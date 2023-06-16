@@ -2,6 +2,9 @@ const addVisitButton = document.querySelector("#add-visit");
 
 async function addVisit(e) {
   try {
+    const username = document.querySelector(
+      'input[name="user-username"]'
+    ).value;
     const form = document.getElementById("add-visit"); // Get the form element
     const formData = new FormData(form); // Create a FormData object
 
@@ -23,7 +26,7 @@ async function addVisit(e) {
         },
       }
     );
-    window.location.href = "/";
+    window.location.href = `/${username}`;
   } catch (err) {
     console.log(err);
   }

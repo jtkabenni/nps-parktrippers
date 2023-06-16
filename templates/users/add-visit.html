@@ -24,6 +24,7 @@
       <ul></ul>
 
       <form id="add-visit">
+        <input type="hidden" name="user-username" value="{{g.user.username}}">
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
         <button type="submit">Add visit</button>
       </form>

@@ -26,7 +26,7 @@ async function updateVisit(e) {
       }
     );
 
-    window.location.href = "/";
+    window.location.href = `/${username}/visits/${visitId}`;
   } catch (err) {
     console.log(err);
   }
