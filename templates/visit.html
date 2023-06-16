@@ -24,7 +24,16 @@
         <div class="activity-description">
           <p>{{activity.description}}</p>
           <div class="note">
+
             <form action="/{{g.user.username}}/visits/{{visit.id}}/save-activity-note" method="POST">
+              {{ form.hidden_tag() }}
+              {{ form.csrf_token }}
+              {% for field in form if field.widget.input_type != 'hidden' %}
+              {% for error in field.errors %}
+              <span class="text-danger">{{ error }}</span>
+              {% endfor %}
+              {{ field(placeholder=field.label.text, class="form-control") }}
+              {% endfor %}
               <input type="hidden" name="activity-id" value="{{activity.id}}">
               <textarea name="note"
                 placeholder="Add activity notes here..">{% if activity.notes %}{{activity.notes}}{% endif %}</textarea>
@@ -34,6 +43,14 @@
         </div>
       </div>
       <div class="activity-delete">
+        {{ form.hidden_tag() }}
+        {{ form.csrf_token }}
+        {% for field in form if field.widget.input_type != 'hidden' %}
+        {% for error in field.errors %}
+        <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+        {{ field(placeholder=field.label.text, class="form-control") }}
+        {% endfor %}
         <form action="{{visit.id}}/activities/{{activity.id}}/delete-activity" method="POST">
           <button><i class="fa fa-trash-o" aria-hidden="true"></i></button>
         </form>
@@ -43,7 +60,16 @@
     {% endfor %}
     <div class="visit-actions">
 
-      <form action="{{visit.id}}/delete-visit" method="POST"> <button>Delete visit</button>
+      <form action="{{visit.id}}/delete-visit" method="POST">
+        {{ form.hidden_tag() }}
+        {{ form.csrf_token }}
+        {% for field in form if field.widget.input_type != 'hidden' %}
+        {% for error in field.errors %}
+        <span class="text-danger">{{ error }}</span>
+        {% endfor %}
+        {{ field(placeholder=field.label.text, class="form-control") }}
+        {% endfor %}
+        <button>Delete visit</button>
       </form>
 
 
